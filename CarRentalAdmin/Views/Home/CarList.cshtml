@@ -1,0 +1,301 @@
+﻿@{
+    var groupedCars = new Dictionary<string, List<Car>>();
+    foreach (var car in Model)
+    {
+        var vehicleName = car.Vehicle.Name;
+        if (!groupedCars.ContainsKey(vehicleName))
+        {
+            groupedCars[vehicleName] = new List<Car>();
+        }
+        groupedCars[vehicleName].Add(car);
+    }
+}
+@{
+    ViewBag.Page = "CarList";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Panel - Car List</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <!-- Header -->
+    <div id="header">
+        <h1>EveryTransport Dashboard</h1>
+        <p>Welcome to the EveryTransport admin panel</p>
+    </div>
+    <div id="sidebar">
+        <a class="@((ViewBag.Page == "Index") ? "active" : null)" href="@Url.Action("Index", "Home")">Home</a>
+        <a class="@((ViewBag.Page == "CarList") ? "active" : null)" href="@Url.Action("CarList", "Home")">Cars</a>
+        <form action="@Url.Action("Logout", "Home")" method="post">
+            <button class="logout-button" type="submit">Log Out</button>
+        </form>
+    </div>
+    <!-- Body Content -->
+    <div id="content">
+        <h2>Car List</h2>
+        <button id="add-car-btn">Add New Car</button>
+        <div class="carTableFixHead">
+            <table id="car-table">
+                <thead>
+                    <tr>
+                        <th>Car Name</th>
+                        <th>Car Plate Number</th>
+                        <th>Year</th>
+                        <th>Color</th>
+                        <th>Notes</th>
+                        <th>Status</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var group in groupedCars)
+                    {
+                        <tr>
+                            <td colspan="8" class="vehicle-category"><strong>@group.Key</strong></td> <!-- Display the vehicle name as a heading -->
+                        </tr>
+                        foreach (var car in group.Value)
+                        {
+                            <tr>
+                                <td>@car.Name</td>
+                                <td>@car.PlateNumber</td>
+                                <td>@car.Year</td>
+                                <td>@car.Color</td>
+                                <td>@car.Notes</td>
+                                <td>
+                                    @if (car.Bookings != null && car.Bookings.Count > 0)
+                                    {
+                                        foreach (var booking in car.Bookings)
+                                        {
+                                            <span>@car.CarStatus.Name (BK @booking.BookingId)</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>@car.CarStatus.Name</span>
+                                    }
+                                </td>
+                                <td><button class="action-button info-button" onclick="openEditModal('@car.CarId')">Edit</button></td>
+                                <td><button class="action-button reject-button" onclick="openDeleteModal('@car.CarId')">Delete</button></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Add New Car Modal-->
+    <div id="addCarModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add New Car</h2>
+            <hr>
+            <form id="addCarForm" action="@Url.Action("AddCar", "Home")" method="post">
+                <label for="vehicleType">Vehicle Type:</label>
+                <select id="vehicleType" name="vehicleType">
+                    @foreach (var vehicle in ViewData["Vehicles"] as List<Vehicle>)
+                    {
+                        <option value="@vehicle.VehicleId">@vehicle.Name</option>
+                    }
+                </select>
+                <table>
+                    <tr>
+                        <td>
+                            <label for="name">Name:</label>
+                            <input type="text" id="name" name="name" required>
+                        </td>
+                        <td>
+                            <label for="plateNumber">Plate Number:</label>
+                            <input type="text" id="plateNumber" name="plateNumber" required>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="year">Year:</label>
+                            <input type="text" id="year" name="year" required>
+                        </td>
+                        <td>
+                            <label for="color">Color:</label>
+                            <input type="text" id="color" name="color" required>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="notes">Notes:</label>
+                            <input type="text" id="notes" name="notes" required>
+                        </td>
+                        <td>
+                            <label for="carStatus">Status:</label>
+                            <select id="carStatus" class="carlist-select" name="carStatus" required>
+                                @foreach (var carStatus in ViewData["CarStatuses"] as List<CarStatus>)
+                                {
+                                    <option value="@carStatus.CarStatusId">@carStatus.Name</option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <button type="submit">Save</button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Car Modal-->
+    <div id="editCarModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditModal()">&times;</span>
+            <h2>Edit Car</h2>
+            <hr>
+            <form id="editCarForm" action="@Url.Action("EditCar", "Home")" method="post">
+                <label for="editVehicle">Vehicle Type:</label>
+                <select id="editVehicle" name="vehicleId">
+                    @foreach (var vehicle in (List<Vehicle>)ViewData["Vehicles"])
+                    {
+                        <option value="@vehicle.VehicleId">@vehicle.Name</option>
+                    }
+                </select>
+                <input type="hidden" id="editCarId" name="carId">
+                <table>
+                    <tr>
+                        <td>
+                            <label for="editName">Name:</label>
+                            <input type="text" id="editName" name="name" required>
+                        </td>
+                        <td>
+                            <label for="editPlateNumber">Plate Number:</label>
+                            <input type="text" id="editPlateNumber" name="plateNumber" required>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="editYear">Year:</label>
+                            <input type="text" id="editYear" name="year" required>
+                        </td>
+                        <td>
+                            <label for="editColor">Color:</label>
+                            <input type="text" id="editColor" name="color" required>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="editNotes">Notes:</label>
+                            <input type="text" id="editNotes" name="notes" required>
+                        </td>
+                        <td>
+                            <label for="editStatus">Status:</label>
+                            <select id="editStatus" class="car-status-select" name="carStatusId" required>
+                                @foreach (var carStatus in (List<CarStatus>)ViewData["CarStatuses"])
+                                {
+                                    <option value="@carStatus.CarStatusId">@carStatus.Name</option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <button type="submit">Save</button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Car Modal-->
+    <div id="deleteCarModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeDeleteModal()">&times;</span>
+            <h2>Delete Car</h2>
+            <hr>    
+            <p>Are you sure you want to delete this car?</p>
+            <button id="confirmDeleteBtn">Delete</button>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <!-- Add New Car-->
+    <script>
+        var modal = document.getElementById("addCarModal");
+        var btn = document.getElementById("add-car-btn");
+        var span = document.getElementsByClassName("close")[0];
+        btn.onclick = function () {
+            modal.style.display = "block";
+        }
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+    <!-- Edit Car-->
+    <script>
+        function openEditModal(carId) {
+            var modal = document.getElementById("editCarModal");
+            modal.style.display = "block";
+
+            fetch(`/Home/GetCarDetails?carId=${carId}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Status ID:", data.status);
+                    console.log("Vehicle ID:", data.vehicle);
+
+                    document.getElementById("editName").value = data.name;
+                    document.getElementById("editPlateNumber").value = data.plateNumber;
+                    document.getElementById("editYear").value = data.year;
+                    document.getElementById("editColor").value = data.color;
+                    document.getElementById("editNotes").value = data.notes;
+                    document.getElementById("editStatus").value = data.status;
+                    document.getElementById("editVehicle").value = data.vehicle;
+
+                    document.getElementById("editCarId").value = carId;
+                });
+        }
+        function closeEditModal() {
+            document.getElementById("editCarModal").style.display = "none";
+        }
+    </script>
+    <!-- Delete Car-->
+    <script>
+        function openDeleteModal(carId) {
+            var modal = document.getElementById("deleteCarModal");
+            modal.style.display = "block";
+
+            var confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+            confirmDeleteBtn.onclick = function () {
+                deleteCar(carId);
+            };
+        }
+        function closeDeleteModal() {
+            var modal = document.getElementById("deleteCarModal");
+            modal.style.display = "none";
+        }
+        function deleteCar(carId) {
+            fetch(`/Home/DeleteCar?carId=${carId}`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    closeDeleteModal();
+                    window.location.reload();
+                } else {
+                    alert(data.errorMessage);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+﻿@{
+    ViewBag.Page = "Login";
+}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Login page</title>
+	<link rel="stylesheet" href="~/css/Login.css" asp-append-version="true" />
+	<style>
+	</style>
+</head>
+<body>
+    <div class="background-container">
+	    <div class="title"><h1>EVERYDAY TRANSPORT</h1></div>
+	    <div class="container">
+		    <div class="left">
+            <img src="~/Images/login-image.png">
+            </div>
+		    <div class="right">
+			    <div class="formBox">
+                    <form action="@Url.Action("Login", "Home")" method="post" name="login">
+                        <div class="input_container_email">
+                            <span class="material-icons">
+                                account_circle
+                            </span>
+                            <input type="text" name="username" placeholder="Username" required />
+                        </div>
+                        <br>
+                        <div class="input_container_password">
+                            <span class="material-icons">
+                                https
+                            </span>
+                            <input type="password" name="password" id="password" placeholder="Password" required />
+                            <i class="material-icons visibility_off" id="toggleVisibility">visibility_off</i>
+                        </div>
+                        <input type="submit" name="submit" value="Login" />
+                    </form>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="error-message">
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <p class="login-error-message">@error.ErrorMessage</p>
+                            }
+                        </div>
+                    }
+			    </div>
+		    </div>	
+	    </div>
+    </div>
+    <script>
+        var toggleVisibility = document.getElementById('toggleVisibility');
+        var passwordField = document.getElementById('password');
+
+        toggleVisibility.addEventListener('click', function () {
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleVisibility.textContent = 'visibility';
+                toggleVisibility.classList.remove('visibility_off');
+                toggleVisibility.classList.add('visibility');
+            } else {
+                passwordField.type = 'password';
+                toggleVisibility.textContent = 'visibility_off';
+                toggleVisibility.classList.remove('visibility');
+                toggleVisibility.classList.add('visibility_off');
+            }
+        });
+    </script>
+</body>
+</html>	

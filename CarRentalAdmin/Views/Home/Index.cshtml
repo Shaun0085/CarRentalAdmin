@@ -1,0 +1,385 @@
+﻿@{
+    ViewBag.Page = "Index";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div id="header">
+        <h1>EveryTransport Dashboard</h1>
+        <p>Welcome to the EveryTransport admin panel</p>
+    </div>
+    <div id="sidebar">
+        <a class="@((ViewBag.Page == "Index") ? "active" : null)" href="@Url.Action("Index", "Home")">Home</a>
+        <a class="@((ViewBag.Page == "CarList") ? "active" : null)" href="@Url.Action("CarList", "Home")">Cars</a>
+        <form action="@Url.Action("Logout", "Home")" method="post">
+            <button class="logout-button" type="submit">Log Out</button>
+        </form>
+    </div>
+    <!-- Body Content -->
+    <div id="content">
+        <div id="btn-container">
+            <button class="filter-btn active-table" onclick="showTable('pending')">New Bookings</button>
+            <button class="filter-btn" onclick="showTable('ongoing')">Ongoing</button>
+            <button class="filter-btn" onclick="showTable('completed')">Completed</button>
+            <button class="filter-btn" onclick="showTable('rejected')">Rejected</button>
+        </div>
+        <!-- Booking Table -->
+        <div class="tableFixHead">
+            <table id="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Customer Name</th>
+                        <th>Phone Number</th>
+                        <th>Vehicle Booked</th>
+                        <th>Pick Up Date</th>
+                        <th>Drop Off Date</th>
+                        <th>Car Assigned</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var booking in Model.Bookings)
+                    {
+                        <tr data-status="@booking.BookingStatus?.Name.ToLower()" style="@(booking.BookingStatus?.Name.ToLower() != "pending" ? "display:none;" : "")">
+                            <td><button class="action-button info-button" onclick="displayBookingDetails(@booking.BookingId)">BK @booking.BookingId</button></td>
+                            <td>@booking.CustomerName</td>
+                            <td>@booking.CustomerPhoneNumber</td>
+                            <td>@booking.Vehicle.Name</td>
+                            <td>@booking.PickUpDate</td>
+                            <td>@booking.DropOffDate</td>
+                            <td>@(booking.Car != null ? booking.Car.PlateNumber : "No Car Assigned")</td>
+                            <td>
+                                @if (booking.BookingStatus != null)
+                                {
+                                    if (booking.BookingStatus.Name.ToLower() == "pending")
+                                    {
+                                    <form action="@Url.Action("ConfirmBooking", "Home")" method="post" class="form-margin">
+                                        <input type="hidden" name="bookingId" value="@booking.BookingId" />
+                                        <button type="submit" class="action-button confirm-button">Confirm</button>
+                                    </form>
+                                    <form action="@Url.Action("RejectBooking", "Home")" method="post" class="form-margin">
+                                        <input type="hidden" name="bookingId" value="@booking.BookingId" />
+                                        <button type="submit" class="action-button reject-button">Reject</button>
+                                    </form>
+                                    }
+                                    else if (booking.BookingStatus.Name.ToLower() == "ongoing")
+                                    {
+                                    <form action="@Url.Action("CompleteBooking", "Home")" method="post" class="form-margin">
+                                        <input type="hidden" name="bookingId" value="@booking.BookingId" />
+                                        <button type="submit" class="action-button confirm-button">Complete</button>
+                                    </form>
+                                    <form action="@Url.Action("UndoBooking", "Home")" method="post" class="form-margin">
+                                        <input type="hidden" name="bookingId" value="@booking.BookingId" />
+                                        <button type="submit" class="action-button reject-button">Undo</button>
+                                    </form>
+                                    }
+                                    else if (booking.BookingStatus.Name.ToLower() == "completed" || booking.BookingStatus.Name.ToLower() == "rejected")
+                                    {
+                                        <button type="button" class="action-button reject-button" onclick="openDeleteModal(@booking.BookingId)">Delete</button>
+                                        @if (booking.BookingStatus.Name.ToLower() == "rejected")
+                                        {
+                                            <form action="@Url.Action("RestoreBooking", "Home")" method="post" class="form-margin">
+                                                <input type="hidden" name="bookingId" value="@booking.BookingId" />
+                                                <button type="submit" class="action-button confirm-button">Restore</button>
+                                            </form>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Status Unavailable</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr id="bookingRow_@booking.BookingId">
+                            <td class="hidden-customer-name" style="display: none;">@booking.CustomerName</td>
+                            <td class="hidden-customer-icnumber" style="display: none;">@booking.Icnumber</td>
+                            <td class="hidden-customer-email" style="display: none;">@booking.Email</td>
+                            <td class="hidden-customer-phone" style="display: none;">@booking.CustomerPhoneNumber</td>
+                            <td class="hidden-vehicle-name" style="display: none;">@booking.Vehicle.Name</td>
+                            <td class="hidden-pick-up-location" style="display: none;">@booking.PickUpLocation</td>
+                            <td class="hidden-pick-up-date" style="display: none;">@booking.PickUpDate.ToString("MM/dd/yyyy")</td>
+                            <td class="hidden-pick-up-time" style="display: none;">@booking.PickUpTime</td>
+                            <td class="hidden-drop-off-location" style="display: none;">@booking.DropOffLocation</td>
+                            <td class="hidden-drop-off-date" style="display: none;">@booking.DropOffDate.ToString("MM/dd/yyyy")</td>
+                            <td class="hidden-drop-off-time" style="display: none;">@booking.DropOffTime</td>
+                            <td class="hidden-location-name" style="display: none;">@booking.Location.Name</td>
+                            <td class="hidden-baby-seat" style="display: none;">@booking.BabySeat</td>
+                            <td class="hidden-usb-cable" style="display: none;">@booking.UsbCable</td>
+                            <td class="hidden-phone-holder" style="display: none;">@booking.PhoneHolder</td>
+                            <td class="hidden-amount" style="display: none;">@booking.Amount</td>
+                            <td class="hidden-payment-type" style="display: none;">@booking.PaymentType</td>
+                            <td class="hidden-car-assigned" style="display: none;">@(booking.Car != null ? booking.Car.Name + " " + booking.Car.PlateNumber : "No Car Assigned")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <!-- Bottom Information Boxes-->
+        <div id="bottom-boxes">
+            <div class="box">
+                <h3>Number Of Cars</h3>
+                <p>@ViewBag.NumberOfCars</p>
+            </div>
+            <div class="box">
+                <h3>Number of Vehicles</h3>
+                <p>@ViewBag.NumberOfVehicles</p>
+            </div>
+            <div class="box">
+                <h3>Number Of Bookings</h3>
+                <p>@ViewBag.TotalNumberOfBookings</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Details Modal -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content" style="max-width: 70%">
+            <span class="close">&times;</span>
+            <!-- Detailed booking information will be displayed here -->
+            <div id="bookingDetails"></div>
+        </div>
+    </div>
+
+    <!-- Delete Booking Modal-->
+    <div id="deleteBookingModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeDeleteModal()">&times;</span>
+            <h2>Delete Booking</h2>
+            <hr>
+            <p>Are you sure you want to delete this booking?</p>
+            <button id="confirmDeleteBtn">Delete</button>
+        </div>
+    </div>
+
+    <!-- Car Assignment Modal -->
+    <div id="carAssignmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeCarAssignmentModal()">&times;</span>
+            <h2>Assign Car</h2>
+            <hr>
+            <p>Please assign a car to the booking before confirming.</p>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <!-- Show Table Info -->
+    <script>
+        function showTable(status) {
+            var rows = document.querySelectorAll("#data-table tbody tr");
+            rows.forEach(function (row) {
+                if (row.getAttribute("data-status") === status) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+    </script>
+    <!-- Show Booking Details Modal -->
+    <script>
+        var modal = document.getElementById("bookingModal");
+        var span = document.getElementsByClassName("close")[0];
+
+        function displayBookingDetails(bookingId) {
+            var row = document.getElementById("bookingRow_" + bookingId);
+            if (row) {
+                var customerName = row.querySelector(".hidden-customer-name").textContent;
+                var customerIcnumber = row.querySelector(".hidden-customer-icnumber").textContent;
+                var customerEmail = row.querySelector(".hidden-customer-email").textContent;
+                var customerPhoneNumber = row.querySelector(".hidden-customer-phone").textContent;
+                var vehicleName = row.querySelector(".hidden-vehicle-name").textContent;
+                var pickUpLocation = row.querySelector(".hidden-pick-up-location").textContent;
+                var pickUpDate = row.querySelector(".hidden-pick-up-date").textContent;
+                var pickUpTime = row.querySelector(".hidden-pick-up-time").textContent;
+                var dropOffLocation = row.querySelector(".hidden-drop-off-location").textContent;
+                var dropOffDate = row.querySelector(".hidden-drop-off-date").textContent;
+                var dropOffTime = row.querySelector(".hidden-drop-off-time").textContent;
+                var locationName = row.querySelector(".hidden-location-name").textContent;
+                var babySeat = row.querySelector(".hidden-baby-seat").textContent;
+                var usbCable = row.querySelector(".hidden-usb-cable").textContent;
+                var phoneHolder = row.querySelector(".hidden-phone-holder").textContent;
+                var amount = row.querySelector(".hidden-amount").textContent;
+                var paymentType = row.querySelector(".hidden-payment-type").textContent;
+                var carAssigned = row.querySelector(".hidden-car-assigned").textContent;
+
+                var bookingDetailsHTML = `
+                    <table>
+                        <tr>
+                            <td>
+                                <p><strong class="booking-modal-title">Customer Information</strong></p>
+                                <hr>
+                                <p><strong>Customer Name:</strong> ${customerName}</p>
+                                <p><strong>Customer IC Number:</strong> ${customerIcnumber}</p>
+                                <p><strong>Customer Email:</strong> ${customerEmail}</p>
+                                <p><strong>Customer Phone Number:</strong> ${customerPhoneNumber}</p>
+                            </td>
+                            <td>
+                                <p><strong class="booking-modal-title">Vehicle Information</strong></p>
+                                <hr>
+                                <p><strong>Vehicle Booked:</strong> ${vehicleName}</p>
+                                <p><strong>Car Assigned:</strong> ${carAssigned}</p>
+                                <form id="carForm" action="@Url.Action("AssignBookingCar", "Home")" method="post">
+                                    <p><strong>Select Car:</strong>
+                                    <select class="carDropdown" name="carId">
+                                        <option value="" selected disabled hidden>Choose here</option>
+                                        @{
+                                            var groupedCars = new Dictionary<string, List<Car>>();
+                                            foreach (var car in Model.CarList)
+                                            {
+                                                var vehicleName = car.Vehicle.Name;
+                                                if (!groupedCars.ContainsKey(vehicleName))
+                                                {
+                                                    groupedCars[vehicleName] = new List<Car>();
+                                                }
+                                                groupedCars[vehicleName].Add(car);
+                                            }
+                                        }
+                                        @foreach (var group in groupedCars)
+                                        {
+                                                            <optgroup label="@group.Key">
+                                                @foreach (var car in group.Value)
+                                                {
+                                                                        <option value="@car.CarId">@car.Name @car.PlateNumber</option>
+                                                }
+                                                            </optgroup>
+                                        }
+                                    </select>
+                                    </p>
+                                    <div class="add-car-input">
+                                        <input type="hidden" name="bookingId" id="bookingId" value="${bookingId}" />
+                                        <button class="saveButton" type="submit" disabled>Save</button>
+                                    </div>
+                            </form>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td rowspan="2">
+                                <p class="booking-modal-title"><strong>Booking Information</strong></p>
+                                <hr>
+                                <p><strong>Pick Up Location:</strong> ${pickUpLocation}</p>
+                                <p><strong>Pick Up Date:</strong> ${pickUpDate}</p>
+                                <p><strong>Pick Up Time:</strong> ${pickUpTime}</p>
+                                <p><strong>Drop Off Location:</strong> ${dropOffLocation}</p>
+                                <p><strong>Drop Off Date:</strong> ${dropOffDate}</p>
+                                <p><strong>Drop Off Time:</strong> ${dropOffTime}</p>
+                                <p><strong>Driving Range:</strong> ${locationName}</p>
+                            </td>
+                            <td>
+                                <p class="booking-modal-title"><strong>Special Request</strong></p>
+                                <hr>
+                                <p><strong>Baby Seat:</strong> ${babySeat}</p>
+                                <p><strong>USB Cable:</strong> ${usbCable}</p>
+                                <p><strong>Phone Holder:</strong> ${phoneHolder}</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p class="booking-modal-title"><strong>Payment Details</strong></p>
+                                <hr>
+                                <p><strong>Payment Type:</strong>${paymentType}</p>
+                                <p><strong>Total Amount:</strong>${amount}</p>
+                            </td>
+                        </tr>
+                    </table>
+                `;
+                document.getElementById("bookingDetails").innerHTML = bookingDetailsHTML;
+                modal.style.display = "block";
+            }
+        }
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+        // Show Active Table Tabs
+        function showTable(status) {
+            var rows = document.querySelectorAll("#data-table tbody tr");
+            rows.forEach(function (row) {
+                if (row.getAttribute("data-status") === status) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+
+            var buttons = document.querySelectorAll(".filter-btn");
+            buttons.forEach(function (button) {
+                button.classList.remove("active-table");
+            });
+
+            event.currentTarget.classList.add("active-table");
+        }
+    </script>
+    <!-- Delete Booking-->
+    <script>
+        function openDeleteModal(bookingId) {
+            var modal = document.getElementById("deleteBookingModal");
+            modal.style.display = "block";
+
+            var confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+            confirmDeleteBtn.onclick = function () {
+                deleteBooking(bookingId);
+            };
+        }
+
+        function closeDeleteModal() {
+            var modal = document.getElementById("deleteBookingModal");
+            modal.style.display = "none";
+        }
+
+        function deleteBooking(bookingId) {
+            fetch(`/Home/DeleteBooking?bookingId=${bookingId}`, {
+                method: 'POST'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        closeDeleteModal();
+                        window.location.reload();
+                    } else {
+                        alert(data.errorMessage);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+    <!-- Car Assignment Modal -->
+    <script>
+        var urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('showCarAssignmentModal')) {
+            openCarAssignmentModal();
+        }
+        function openCarAssignmentModal() {
+            var modal = document.getElementById("carAssignmentModal");
+            modal.style.display = "block";
+        }
+        function closeCarAssignmentModal() {
+            var modal = document.getElementById("carAssignmentModal");
+            modal.style.display = "none";
+        }
+    </script>
+    <!-- Select Car Save Button-->
+    <script>
+        document.addEventListener('change', function (event) {
+            if (event.target && event.target.classList.contains('carDropdown')) {
+                var saveButton = event.target.closest('form').querySelector('.saveButton');
+                saveButton.disabled = event.target.value === '';
+            }
+        });
+    </script>
+</body>
+</html>

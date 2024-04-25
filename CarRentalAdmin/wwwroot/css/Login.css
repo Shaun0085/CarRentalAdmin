@@ -1,0 +1,191 @@
+﻿/*---------- Login Stlye ----------*/
+.background-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/Images/background.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: -1;
+}
+.title {
+    text-align: center;
+    padding: 50px 0 20px;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+.title h1 {
+    margin: 0px 0px 30px 0px;
+    padding: 0px;
+    color: #ffe311;
+    text-transform: uppercase;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 70px;
+}
+.container {
+    width: 50%; 
+    height: 50%; 
+    background: #fff; 
+    margin: auto; 
+    border: 2px solid #fff; 
+    box-shadow: 0 15px 40px rgba(0,0,0,.5); 
+    border-radius: 30px; 
+    position: fixed; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+}
+.container .left {
+    float: left;
+    width: 50%;
+    height: 100%;
+    background-size: cover;
+    box-sizing: border-box;
+    border-radius: 30px 0px 0px 30px;
+}
+.container .left img {
+    width: 100%;
+    height: 100%;
+    border-radius: 30px;
+}
+.container .right {
+    float: right;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+}
+.formBox {
+    box-sizing: border-box;
+    width: 90%;
+    height: 47%; 
+    background: #fff;
+    border-radius: 30px 30px 30px 30px;
+}
+.formBox input {
+    width: 100%;
+    border: none;
+    outline: none;
+    margin: 0px 0px 10px 0px;
+    font-size: 18px;
+}
+.formBox input[type="submit"] {
+    border: none;
+    outline: none;
+    height: 50px;
+    color: black;
+    background: #ffe311;
+    margin: 10px 0px 5px 0px;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 20px;
+}
+.formBox input[type="submit"]:hover {
+    background: black;
+    color: white;
+    letter-spacing: 1px;
+    transition: all 0.2s ease 0s;
+    text-decoration: none;
+}
+i {
+    color: #aaa;
+    cursor: pointer;
+}
+.input_container_password {
+    display: flex;
+    margin: 0px 0px 10px 0px;
+    border-bottom: 2px solid black;
+}
+.input_container_email {
+    display: flex;
+    margin: 0px 0px 10px 0px;
+    border-bottom: 2px solid black;
+}
+.material-icons {
+    padding-right: 5px;
+}
+.cancel_btn {
+    width: 100%;
+    border: none;
+    outline: none;
+    height: 50px;
+    color: white;
+    background: #e01f3a;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 20px;
+    margin: 10px 0px 10px 0px;
+}
+.cancel_btn:hover {
+    background: #f00f31;
+    letter-spacing: 1px;
+    transition: all 0.2s ease 0s;
+    text-decoration: underline;
+}
+.login-error-message {
+    text-align: center;
+    color: red;
+    font-size: 20px;
+    font-family: 'Josefin Sans', sans-serif;
+    margin: 10px auto;
+}
+@media only screen and (max-width:1440px) {
+    .container .left {
+    }
+
+    .container .right {
+        width: 100%;
+    }
+
+    .container {
+        width: 80%;
+    }
+}
+@media only screen and (max-height:700px) {
+    .container .left {
+        display: none;
+    }
+
+    .container .right {
+        width: 100%;
+    }
+
+    .container {
+        width: 80%;
+    }
+}
+@media only screen and (max-width:400px) {
+    .container .left {
+    }
+
+    .container .right {
+        width: 100%;
+    }
+
+    .container {
+        width: 80%;
+        height: 65%;
+    }
+
+    .formBox input {
+        font-size: 12px;
+    }
+}
+@media only screen and (max-width:380px) {
+    .container .left {
+    }   
+
+    .container .right {
+        width: 100%;
+    }
+
+    .container {
+        width: 80%;
+        height: 45%;
+    }
+
+    .formBox input {
+        font-size: 12px;
+    }
+}

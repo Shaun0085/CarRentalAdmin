@@ -1,0 +1,394 @@
+/*---------- Index Stlye ----------*/
+body{
+    background-color: whitesmoke;
+}
+#header {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+}
+#header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+#header p {
+    margin: 5px 0;
+    font-size: 16px;
+}
+body {
+    margin: 0;
+    font-family: 'Noto Sans', sans-serif;
+}
+#sidebar {
+    height: 100vh;
+    width: 200px;
+    background-color: #f4dd08;
+    position: fixed;
+    left: 0;
+}
+#sidebar a {
+    padding: 10px;
+    display: block;
+    color: black;
+    text-decoration: none;
+}
+#sidebar a.active {
+    background-color: black;
+    color: white;
+}
+#sidebar a:hover {
+    background-color: black;
+    color: white;
+}
+#sidebar .logout-button {
+    outline: none;
+    border: none;
+    width: 100%;
+    height: 42px;
+    text-align: initial;
+    background-color: #f4dd08;
+    padding: 8px 12px;
+}
+#sidebar .logout-button:hover {
+    background-color: black;
+    color: white;
+}
+#content {
+    margin-left: 200px;
+    padding: 20px;
+}
+.tableFixHead {
+    overflow-y: scroll;
+    top: 0;
+    height: 350px;
+}
+.tableFixHead thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+#data-table {
+    margin-top: 0;
+    border-collapse: collapse;
+    width: 100%;
+}
+#data-table th, td {
+    padding: 8px 16px;
+}
+.tableFixHead::-webkit-scrollbar {
+    width: 8px;
+}
+.tableFixHead::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+.tableFixHead::-webkit-scrollbar-thumb {
+    background: #888;
+}
+.tableFixHead::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+#data-table td {
+    padding: 8px;
+    text-align: center;
+}
+#data-table tr {
+    border-bottom: 1px solid lightgrey;
+}
+#data-table th {
+    background-color: black;
+    color: white;
+}
+#btn-container {
+    margin-bottom: 10px;
+}
+#content #btn-container .active-table {
+    background-color: black;
+    color: white;
+}
+.form-margin {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0;
+}
+.filter-btn {
+    padding: 8px 12px;
+    margin-right: 10px;
+    cursor: pointer;
+    background-color: #f4dd08;
+    border: none;
+    border-radius: 12px;
+}
+.confirm-button {
+    background-color: #5bd300;
+    color: white;
+    border: none;
+    border-radius: 12px;
+}
+.confirm-button:hover {
+    background-color: #04b800;
+}
+.reject-button {
+    background-color: #dd1500;
+    color: white;
+    border: none;
+    border-radius: 12px;
+}
+.reject-button:hover {
+    background-color: #bc000e;
+}
+.info-button {
+    background-color: #fcd900;
+    color: white;
+    border: none;
+    border-radius: 12px;
+}
+.info-button:hover {
+    background-color: #d7c100;
+}
+.action-button {
+    padding: 5px 10px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+#bottom-boxes {
+    display: flex;
+    justify-content: space-around;
+    background-color: #f0f0f0;
+    padding: 20px;
+    position: fixed;
+    bottom: 0;
+    width: calc(100% - 240px);
+    box-shadow: 0px -4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 2;
+}
+.box {
+    flex: 1;
+    padding: 40px;
+    border-radius: 8px;
+    background-color: #fff;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.box h3 {
+    margin: 0;
+    color: #333;
+}
+.box p {
+    margin: 10px 0;
+    color: #666;
+}
+
+/* Booking Details Modal */
+.add-car-input {
+    display: flex;
+}
+#bookingModal {
+    display: none;
+    position: fixed;
+    padding-top: 30px;
+    z-index: 3;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+}
+.booking-modal-title {
+    color: #fcd900;
+}
+
+/*---------- Car List Stlye ----------*/
+#add-car-btn {
+    margin-bottom: 20px;
+}
+.carTableFixHead {
+    overflow-y: scroll;
+    top: 0;
+    height: 500px;
+}
+.carTableFixHead thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+#car-table {
+    margin-top: 0;
+    border-collapse: collapse;
+    width: 100%;
+}
+#car-table th, td {
+    padding: 8px 16px;
+}
+.carTableFixHead::-webkit-scrollbar {
+    width: 8px;
+}
+.carTableFixHead::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+.carTableFixHead::-webkit-scrollbar-thumb {
+    background: #888;
+}
+.carTableFixHead::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+#car-table th,
+#car-table td {
+    padding: 8px;
+    text-align: left;
+}
+#car-table tr {
+    border-bottom: 1px solid #ddd;
+}
+#car-table th {
+    background-color: black;
+    color: white;
+}
+.vehicle-category{
+    background-color: slategrey;
+}
+#add-car-btn,
+.edit-btn,
+.delete-btn {
+    padding: 6px 10px;
+    margin-right: 5px;
+    cursor: pointer;
+    background-color: #f4dd08;
+    border: none;
+    border-radius: 5px;
+}
+#add-car-btn:hover,
+.edit-btn:hover,
+.delete-btn:hover {
+    background-color: #333;
+    color: #fff;
+}
+@media screen and (max-width: 768px) {
+    .car-card {
+        width: calc(50% - 20px);
+    }
+}
+@media screen and (max-width: 480px) {
+    .car-card {
+        width: calc(100% - 20px);
+    }
+}
+/* Add New Car Modal */
+.modal {
+    display: none;
+    position: fixed;
+    padding-top: 10%;
+    z-index: 3;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+.modal-content {
+    background-color: whitesmoke;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    border-radius: 5px;
+    max-width: 45%;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.modal-content table td {
+    border: none;
+    vertical-align: top;
+}
+.modal-content table td p {
+    text-align: left;
+}
+.modal-content table td h2 {
+    float: left;
+}
+.modal-content table td label {
+    text-align: right;
+    clear: both;
+    float: left;
+    margin-right: 15px;
+}
+.modal-content table td input {
+    float: right;
+}
+.modal-content button {
+    padding: 6px 10px;
+    margin-right: 5px;
+    cursor: pointer;
+    width: 180px;
+    background-color: #f4dd08;
+    border: none;
+    border-radius: 5px;
+    float: right;
+}
+.modal-content button:hover {
+    background-color: #333;
+    color: #fff;
+}
+.close {
+    position: absolute;
+    color: #aaa;
+    right: 0;
+    padding: 0 20px 0 0;
+    font-size: 28px;
+    font-weight: bold;
+}
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+.modal input, select {
+    border: 0;
+    outline: 0;
+    color: rgb(60, 66, 87);
+    background-color: rgb(255, 255, 255);
+    box-shadow: rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(60 66 87 / 16%) 0px 0px 0px 1px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 0%) 0px 0px 0px 0px;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+    padding: 4px 8px;
+    min-height: 28px;
+    vertical-align: middle;
+    transition: background-color .24s, box-shadow .24s;
+    transition-property: background-color, box-shadow;
+    transition-duration: 0.24s, 0.24s;
+    transition-timing-function: ease, ease;
+    transition-delay: 0s, 0s;
+}
+.modal input:focus, select:focus {
+    box-shadow: rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(58 151 212 / 36%) 0px 0px 0px 4px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(60 66 87 / 16%) 0px 0px 0px 1px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(0 0 0 / 0%) 0px 0px 0px 0px;
+}
+.modal-content table td .carlist-select {
+    width: 175px;
+    float: right;
+}
+.modal-content table td .car-status-select {
+    width: 175px;
+    float: right;
+}
+/* Media query for larger screens */
+@media screen and (min-width: 1600px) {
+    .tableFixHead {
+        height: 600px; /* Adjust as needed for larger screens */
+    }
+    .carTableFixHead {
+        overflow-y: scroll;
+        top: 0;
+        height: 700px;
+    }
+}
