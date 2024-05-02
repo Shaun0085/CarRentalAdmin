@@ -78,7 +78,12 @@
                                     }
                                 </td>
                                 <td><button class="action-button info-button" onclick="openEditModal('@car.CarId')">Edit</button></td>
-                                <td><button class="action-button reject-button" onclick="openDeleteModal('@car.CarId')">Delete</button></td>
+                                <td>
+                                    <button class="action-button reject-button" onclick="openDeleteModal('@car.CarId')" @if (car.CarStatus.Name == "Occupied")
+                                    {
+                                        <text>disabled="disabled" style="cursor:default; background-color: #cccccc;"</text>
+                                    }>Delete</button>
+                                </td>
                             </tr>
                         }
                     }
@@ -130,7 +135,7 @@
                         <td>
                             <label for="carStatus">Status:</label>
                             <select id="carStatus" class="carlist-select" name="carStatus" required>
-                                @foreach (var carStatus in ViewData["CarStatuses"] as List<CarStatus>)
+                                @foreach (var carStatus in ViewData["CarStatusesForAddNewCar"] as List<CarStatus>)
                                 {
                                     <option value="@carStatus.CarStatusId">@carStatus.Name</option>
                                 }
@@ -191,7 +196,7 @@
                         <td>
                             <label for="editStatus">Status:</label>
                             <select id="editStatus" class="car-status-select" name="carStatusId" required>
-                                @foreach (var carStatus in (List<CarStatus>)ViewData["CarStatuses"])
+                                @foreach (var carStatus in (List<CarStatus>)ViewData["AllCarStatuses"])
                                 {
                                     <option value="@carStatus.CarStatusId">@carStatus.Name</option>
                                 }
@@ -238,32 +243,55 @@
         }
     </script>
     <!-- Edit Car-->
-    <script>
-        function openEditModal(carId) {
-            var modal = document.getElementById("editCarModal");
-            modal.style.display = "block";
+   <script>
+    function toggleCarStatusInput() {
+        var selectedStatusId = document.getElementById("editStatus").value;
+        var carStatusInput = document.getElementById("editStatus");
+        var isDisabled = (selectedStatusId === "3");
+            var isAvailableOrServicing = selectedStatusId === "1" || selectedStatusId === "2";
+        carStatusInput.disabled = isDisabled;
 
-            fetch(`/Home/GetCarDetails?carId=${carId}`)
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Status ID:", data.status);
-                    console.log("Vehicle ID:", data.vehicle);
-
-                    document.getElementById("editName").value = data.name;
-                    document.getElementById("editPlateNumber").value = data.plateNumber;
-                    document.getElementById("editYear").value = data.year;
-                    document.getElementById("editColor").value = data.color;
-                    document.getElementById("editNotes").value = data.notes;
-                    document.getElementById("editStatus").value = data.status;
-                    document.getElementById("editVehicle").value = data.vehicle;
-
-                    document.getElementById("editCarId").value = carId;
-                });
+        for (var i = 0; i < carStatusInput.options.length; i++) {
+            var option = carStatusInput.options[i];
+            if (option.value === "3") {
+                option.style.display = isAvailableOrServicing ? "none" : "block";
+            }
         }
-        function closeEditModal() {
-            document.getElementById("editCarModal").style.display = "none";
-        }
-    </script>
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        toggleCarStatusInput();
+    });
+
+    function openEditModal(carId) {
+        var modal = document.getElementById("editCarModal");
+        modal.style.display = "block";
+
+        fetch(`/Home/GetCarDetails?carId=${carId}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log("Status ID:", data.status);
+                console.log("Vehicle ID:", data.vehicle);
+
+                document.getElementById("editName").value = data.name;
+                document.getElementById("editPlateNumber").value = data.plateNumber;
+                document.getElementById("editYear").value = data.year;
+                document.getElementById("editColor").value = data.color;
+                document.getElementById("editNotes").value = data.notes;
+                document.getElementById("editVehicle").value = data.vehicle;
+
+                document.getElementById("editStatus").value = data.status;
+
+                document.getElementById("editCarId").value = carId;
+
+                toggleCarStatusInput();
+            });
+    }
+
+    function closeEditModal() {
+        document.getElementById("editCarModal").style.display = "none";
+    }
+</script>
     <!-- Delete Car-->
     <script>
         function openDeleteModal(carId) {

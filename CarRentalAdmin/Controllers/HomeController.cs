@@ -123,22 +123,30 @@ namespace CarRentalAdmin.Controllers
                     .FirstOrDefault(b => b.BookingId == bookingId);
                 if (booking != null)
                 {
-                    if (booking.Car != null)
+                    // Check if a car is selected
+                    if (carId != 0)
                     {
-                        booking.Car.CarStatusId = 1;
-                    }
-                    var car = _context.Cars.FirstOrDefault(c => c.CarId == carId);
-                    if (car != null)
-                    {
-                        car.CarStatusId = 3;
-                        booking.Car = car;
-                        _context.SaveChanges();
-                        return RedirectToAction("Index");
+                        var car = _context.Cars.FirstOrDefault(c => c.CarId == carId);
+                        if (car != null)
+                        {
+                            // Update car status
+                            car.CarStatusId = 3;
+                            // Update booking with assigned car
+                            booking.Car = car;
+                        }
+                        else
+                        {
+                            return RedirectToAction("Error", new { message = "Car not found" });
+                        }
                     }
                     else
                     {
-                        return RedirectToAction("Error", new { message = "Car not found" });
+                        // If "No Car Assigned" is selected, set booking's car to null
+                        booking.Car = null;
                     }
+
+                    _context.SaveChanges();
+                    return RedirectToAction("Index");
                 }
                 else
                 {
@@ -150,6 +158,7 @@ namespace CarRentalAdmin.Controllers
                 return RedirectToAction("Error");
             }
         }
+
 
         // Confirm Booking Controller
         [HttpPost]
@@ -172,13 +181,22 @@ namespace CarRentalAdmin.Controllers
         [HttpPost]
         public IActionResult RejectBooking(int bookingId)
         {
-            var booking = _context.Bookings.FirstOrDefault(b => b.BookingId == bookingId);
+            var booking = _context.Bookings.Include(b => b.Car).FirstOrDefault(b => b.BookingId == bookingId);
+
             if (booking != null)
             {
+                // Update booking status to 'Rejected'
                 booking.BookingStatus = _context.BookingStatuses.FirstOrDefault(s => s.Name.ToLower() == "rejected");
+
+                if (booking.Car != null)
+                {
+                    booking.Car.CarStatusId = 1;
+                    booking.CarId = null; 
+                }
                 _context.SaveChanges();
             }
-            return RedirectToAction("Index"); 
+
+            return RedirectToAction("Index");
         }
 
         // Complete Booking Controller
@@ -195,7 +213,8 @@ namespace CarRentalAdmin.Controllers
 
                 if (booking.Car != null)
                 {
-                    booking.Car.CarStatus = _context.CarStatuses.FirstOrDefault(s => s.Name.ToLower() == "available");
+                    booking.Car.CarStatusId = 1;
+                    booking.CarId = null;
                 }
                 _context.SaveChanges();
             }
@@ -250,18 +269,29 @@ namespace CarRentalAdmin.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
+
             var cars = await _context.Cars
                 .Include(c => c.CarStatus)
                 .Include(c => c.Vehicle)
                 .Include(c => c.Bookings)
                 .ToListAsync();
 
-            var carStatuses = await _context.CarStatuses
-                .Where(cs => cs.Name == "Available" || cs.Name == "Under Servicing")
-                .ToListAsync();
-            ViewData["CarStatuses"] = carStatuses;
+            // Retrieve all car statuses
+            var allCarStatuses = await _context.CarStatuses.ToListAsync();
+
+            // Pass all car statuses to the view
+            ViewData["AllCarStatuses"] = allCarStatuses;
+
+            // Filter out the "Occupied" status for add new car modal
+            var carStatusesForAddNewCar = allCarStatuses
+                .Where(cs => cs.Name != "Occupied")
+                .ToList();
+
+            ViewData["CarStatusesForAddNewCar"] = carStatusesForAddNewCar;
+
             var vehicles = await _context.Vehicles.ToListAsync();
             ViewData["Vehicles"] = vehicles;
+
             return View(cars);
         }
 

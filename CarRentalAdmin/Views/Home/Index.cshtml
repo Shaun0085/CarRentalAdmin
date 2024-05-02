@@ -230,35 +230,38 @@
                                 <form id="carForm" action="@Url.Action("AssignBookingCar", "Home")" method="post">
                                     <p><strong>Select Car:</strong>
                                     <select class="carDropdown" name="carId">
-                                        <option value="" selected disabled hidden>Choose here</option>
-                                        @{
-                                            var groupedCars = new Dictionary<string, List<Car>>();
-                                            foreach (var car in Model.CarList)
-                                            {
-                                                var vehicleName = car.Vehicle.Name;
-                                                if (!groupedCars.ContainsKey(vehicleName))
-                                                {
-                                                    groupedCars[vehicleName] = new List<Car>();
-                                                }
-                                                groupedCars[vehicleName].Add(car);
-                                            }
-                                        }
-                                        @foreach (var group in groupedCars)
+                                    <option value="" selected disabled hidden>Choose here</option>
+                                    @{
+                                        var groupedCars = new Dictionary<string, List<Car>>();
+                                        foreach (var car in Model.CarList)
                                         {
-                                                            <optgroup label="@group.Key">
-                                                @foreach (var car in group.Value)
-                                                {
-                                                                        <option value="@car.CarId">@car.Name @car.PlateNumber</option>
-                                                }
-                                                            </optgroup>
+                                            var vehicleName = car.Vehicle.Name;
+                                            if (!groupedCars.ContainsKey(vehicleName))
+                                            {
+                                                groupedCars[vehicleName] = new List<Car>();
+                                            }
+                                            groupedCars[vehicleName].Add(car);
                                         }
+                                    }
+                                    @foreach (var group in groupedCars)
+                                    {
+                                                    <optgroup label="@group.Key">
+                                            @foreach (var car in group.Value)
+                                            {
+                                                                <option value="@car.CarId">@car.Name @car.PlateNumber</option>
+                                            }
+                                                    </optgroup>
+                                    }
+                                    <optgroup label="No Car Assigned">
+                                        <option value="0">No Car Assigned</option>
+                                    </optgroup>
                                     </select>
                                     </p>
                                     <div class="add-car-input">
                                         <input type="hidden" name="bookingId" id="bookingId" value="${bookingId}" />
                                         <button class="saveButton" type="submit" disabled>Save</button>
                                     </div>
-                            </form>
+                                </form>
                             </td>
                         </tr>
                         <tr>
