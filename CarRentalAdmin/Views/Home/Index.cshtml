@@ -118,6 +118,14 @@
                             <td class="hidden-amount" style="display: none;">@booking.Amount</td>
                             <td class="hidden-payment-type" style="display: none;">@booking.PaymentType</td>
                             <td class="hidden-car-assigned" style="display: none;">@(booking.Car != null ? booking.Car.Name + " " + booking.Car.PlateNumber : "No Car Assigned")</td>
+                            <td class="hidden-first-name" style="display: none;">@booking.Billing.FirstName</td>
+                            <td class="hidden-last-name" style="display: none;">@booking.Billing.LastName</td>
+                            <td class="hidden-phone-number" style="display: none;">@booking.Billing.PhoneNumber</td>
+                            <td class="hidden-address" style="display: none;">@booking.Billing.Address</td>
+                            <td class="hidden-city" style="display: none;">@booking.Billing.City</td>
+                            <td class="hidden-post-code" style="display: none;">@booking.Billing.PostCode</td>
+                            <td class="hidden-country" style="display: none;">@booking.Billing.Country</td>
+                            <td class="hidden-state" style="display: none;">@booking.Billing.State</td>
                         </tr>
                     }
                 </tbody>
@@ -210,6 +218,14 @@
                 var amount = row.querySelector(".hidden-amount").textContent;
                 var paymentType = row.querySelector(".hidden-payment-type").textContent;
                 var carAssigned = row.querySelector(".hidden-car-assigned").textContent;
+                var firstName = row.querySelector(".hidden-first-name").textContent;
+                var lastName = row.querySelector(".hidden-last-name").textContent;
+                var phoneNumber = row.querySelector(".hidden-phone-number").textContent;
+                var address = row.querySelector(".hidden-address").textContent;
+                var postCode = row.querySelector(".hidden-post-code").textContent;
+                var city = row.querySelector(".hidden-city").textContent;
+                var country= row.querySelector(".hidden-country").textContent;
+                var state = row.querySelector(".hidden-state").textContent;
 
                 var bookingDetailsHTML = `
                     <table>
@@ -265,7 +281,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td rowspan="2">
+                            <td>
                                 <p class="booking-modal-title"><strong>Booking Information</strong></p>
                                 <hr>
                                 <p><strong>Pick Up Location:</strong> ${pickUpLocation}</p>
@@ -277,21 +293,34 @@
                                 <p><strong>Driving Range:</strong> ${locationName}</p>
                             </td>
                             <td>
+                                <p class="booking-modal-title"><strong>Billing Details</strong></p>
+                                <hr>
+                                <p><strong>First Name:</strong>${firstName}</p>
+                                <p><strong>Last Name:</strong>${lastName}</p>
+                                <p><strong>Contact Number:</strong>${phoneNumber}</p>
+                                <p><strong>Address:</strong>${address}</p>
+                                <p><strong>PostCode:</strong>${postCode}</p>
+                                <p><strong>City:</strong>${city}</p>
+                                <p><strong>Country:</strong>${country}</p>
+                                <p><strong>State:</strong>${state}</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
                                 <p class="booking-modal-title"><strong>Special Request</strong></p>
                                 <hr>
                                 <p><strong>Baby Seat:</strong> ${babySeat}</p>
                                 <p><strong>USB Cable:</strong> ${usbCable}</p>
                                 <p><strong>Phone Holder:</strong> ${phoneHolder}</p>
                             </td>
-                        </tr>
-                        <tr>
                             <td>
                                 <p class="booking-modal-title"><strong>Payment Details</strong></p>
                                 <hr>
                                 <p><strong>Payment Type:</strong>${paymentType}</p>
-                                <p><strong>Total Amount:</strong>${amount}</p>
+                                <p><strong>Total Amount (RM):</strong>${amount}</p>
                             </td>
                         </tr>
+                                
                     </table>
                 `;
                 document.getElementById("bookingDetails").innerHTML = bookingDetailsHTML;

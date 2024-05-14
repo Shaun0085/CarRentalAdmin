@@ -15,6 +15,8 @@ public partial class CarRentalDatabaseContext : DbContext
 
     public virtual DbSet<Admin> Admins { get; set; }
 
+    public virtual DbSet<Billing> Billings { get; set; }
+
     public virtual DbSet<Booking> Bookings { get; set; }
 
     public virtual DbSet<BookingStatus> BookingStatuses { get; set; }
@@ -42,11 +44,40 @@ public partial class CarRentalDatabaseContext : DbContext
             entity.HasKey(e => e.AdminId).HasName("PK__Admins__719FE488F056C740");
         });
 
+        modelBuilder.Entity<Billing>(entity =>
+        {
+            entity.HasKey(e => e.BillingId).HasName("PK__Billings__F1656D134AA1996F");
+
+            entity.Property(e => e.BillingId).HasColumnName("BillingID");
+            entity.Property(e => e.Address)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.City)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.Country)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.FirstName)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.LastName)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.PostCode)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.State)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+        });
+
         modelBuilder.Entity<Booking>(entity =>
         {
             entity.HasKey(e => e.BookingId).HasName("PK__Bookings__73951ACD95A86460");
 
             entity.Property(e => e.BookingId).HasColumnName("BookingID");
+            entity.Property(e => e.BillingId).HasColumnName("BillingID");
             entity.Property(e => e.BookingStatusId).HasColumnName("BookingStatusID");
             entity.Property(e => e.CarId).HasColumnName("CarID");
             entity.Property(e => e.DropOffDate).HasColumnType("date");
@@ -60,6 +91,10 @@ public partial class CarRentalDatabaseContext : DbContext
             entity.Property(e => e.PaymentType).IsUnicode(false);
             entity.Property(e => e.PickUpDate).HasColumnType("date");
             entity.Property(e => e.VehicleId).HasColumnName("VehicleID");
+
+            entity.HasOne(d => d.Billing).WithMany(p => p.Bookings)
+                .HasForeignKey(d => d.BillingId)
+                .HasConstraintName("FK_Billings_BillingID");
 
             entity.HasOne(d => d.BookingStatus).WithMany(p => p.Bookings)
                 .HasForeignKey(d => d.BookingStatusId)

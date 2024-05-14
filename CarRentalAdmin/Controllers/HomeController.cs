@@ -69,7 +69,7 @@ namespace CarRentalAdmin.Controllers
 
         // Index Page Controller
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Index(string status = "new")
+        public IActionResult Index()
         {
             var userName = HttpContext.Session.GetString("UserName");
             if (string.IsNullOrEmpty(userName))
@@ -82,6 +82,7 @@ namespace CarRentalAdmin.Controllers
                     .Include(b => b.Payment)
                     .Include(b => b.Location)
                     .Include(b => b.Car)
+                    .Include(b => b.Billing)
                     .ToList();
             var carList = _context.Cars
                 .Include(c => c.CarStatus)
@@ -112,7 +113,6 @@ namespace CarRentalAdmin.Controllers
             return View(viewModel);
         }
 
-        // Assign Car to Booking Controller
         [HttpPost]
         public IActionResult AssignBookingCar(int bookingId, int carId)
         {
@@ -123,15 +123,16 @@ namespace CarRentalAdmin.Controllers
                     .FirstOrDefault(b => b.BookingId == bookingId);
                 if (booking != null)
                 {
-                    // Check if a car is selected
                     if (carId != 0)
                     {
                         var car = _context.Cars.FirstOrDefault(c => c.CarId == carId);
                         if (car != null)
                         {
-                            // Update car status
+                            if (booking.Car != null)
+                            {
+                                booking.Car.CarStatusId = 1;
+                            }
                             car.CarStatusId = 3;
-                            // Update booking with assigned car
                             booking.Car = car;
                         }
                         else
@@ -158,7 +159,6 @@ namespace CarRentalAdmin.Controllers
                 return RedirectToAction("Error");
             }
         }
-
 
         // Confirm Booking Controller
         [HttpPost]

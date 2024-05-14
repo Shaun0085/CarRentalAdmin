@@ -20,6 +20,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[Billings]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Bookings]",
          "ObjectType": 0
       },
