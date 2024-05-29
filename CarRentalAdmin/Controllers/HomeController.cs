@@ -113,6 +113,7 @@ namespace CarRentalAdmin.Controllers
             return View(viewModel);
         }
 
+        //Assign Car to Bookings Controller
         [HttpPost]
         public IActionResult AssignBookingCar(int bookingId, int carId)
         {
@@ -158,6 +159,22 @@ namespace CarRentalAdmin.Controllers
             {
                 return RedirectToAction("Error");
             }
+        }
+
+        //Edit Booking Notes Controller
+        [HttpPost]
+        public IActionResult SaveNotes(int bookingId, string notes)
+        {
+            var booking = _context.Bookings.FirstOrDefault(b => b.BookingId == bookingId);
+            if (booking == null)
+            {
+                return NotFound();
+            }
+
+            booking.Notes = notes;
+            _context.SaveChanges();
+
+            return RedirectToAction("Index");
         }
 
         // Confirm Booking Controller

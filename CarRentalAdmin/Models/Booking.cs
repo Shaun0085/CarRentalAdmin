@@ -53,6 +53,8 @@ public partial class Booking
 
     public int? BillingId { get; set; }
 
+    public string Notes { get; set; }
+
     public virtual Billing Billing { get; set; }
 
     public virtual BookingStatus BookingStatus { get; set; }

@@ -126,6 +126,7 @@
                             <td class="hidden-post-code" style="display: none;">@booking.Billing.PostCode</td>
                             <td class="hidden-country" style="display: none;">@booking.Billing.Country</td>
                             <td class="hidden-state" style="display: none;">@booking.Billing.State</td>
+                            <td class="hidden-notes" style="display: none;">@booking.Notes</td>
                         </tr>
                     }
                 </tbody>
@@ -226,6 +227,7 @@
                 var city = row.querySelector(".hidden-city").textContent;
                 var country= row.querySelector(".hidden-country").textContent;
                 var state = row.querySelector(".hidden-state").textContent;
+                var notes = row.querySelector(".hidden-notes").textContent;
 
                 var bookingDetailsHTML = `
                     <table>
@@ -320,7 +322,20 @@
                                 <p><strong>Total Amount (RM):</strong>${amount}</p>
                             </td>
                         </tr>
-                                
+                        <tr>
+                            <td colspan="2">
+                                <p class="booking-modal-title"><strong>Notes</strong></p>
+                                <form action="@Url.Action("SaveNotes", "Home")" method="post">
+                                    <div>
+                                        <textarea id="notes" name="notes" rows="4" cols="50">${notes}</textarea>
+                                    </div>
+                                    <input type="hidden" name="bookingId" id="bookingId" value="${bookingId}" />
+                                    <div>
+                                        <button class="saveNotesButton" type="submit">Save</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>           
                     </table>
                 `;
                 document.getElementById("bookingDetails").innerHTML = bookingDetailsHTML;
